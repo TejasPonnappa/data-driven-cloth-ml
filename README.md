@@ -38,12 +38,12 @@ python -m src.train --name pca128 --mode pca --k 128        # train one model
 python -m src.evaluate                                      # test metrics + plots in results/
 python demo.py --model pca128 --compare linreg              # live demo (arrow keys change pose)
 ```
-Or everything at once: `bash run_all.sh`
+Or everything at once (Windows): `run_all.bat`
 
 Models trained for the ablation: `linreg`, `direct` (no PCA), `pca256`, `pca128`, `pca64`.
-The reported results use 1000 epochs for the four MLPs (as in the paper), which is what `run_all.sh` / `run_all.bat` use
+The reported results use 1000 epochs for the four MLPs (as in the paper), which is what `run_all.bat` uses
 (about 8-9 minutes per model on our laptop).
-Windows users: run `run_all.bat` (or the python commands inside it) instead of `run_all.sh`.
+On Linux/macOS, run the python commands listed in `run_all.bat` one by one.
 
 ## Results
 Test set, single run (seed 0), 1000 epochs, Adam lr 1e-4, batch 32. Exact numbers are in `results/summary.csv`.
@@ -74,3 +74,8 @@ src/evaluate.py  test metrics, timing, plots
 demo.py          interactive predicted-vs-ground-truth viewer
 docs/            slides and report
 ```
+
+## Team contributions
+- **Tejas Ponnappa (PES1UG24CS498):** dataset generation, outlier filtering and train/val/test split (`src/data.py`, `src/utils.py`); training pipeline and the model runs for the ablation (`src/train.py`, `run_all.bat`); evaluation, metrics and plots (`src/evaluate.py`); live demo (`demo.py`); repository setup, results and report.
+- **Mukesh Sheregar (PES1UG24CS828):** PCA of the vertex offsets (`src/pca.py`); network architecture with the fixed PCA layer and the linear-regression baseline (`src/model.py`); added the PCA, model and evaluation modules to the repository and re-ran the evaluation (`python -m src.evaluate`) to check the results.
+- **Both:** presenting the project at the review.
