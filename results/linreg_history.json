@@ -1,0 +1,18 @@
+{
+  "train_mse": [
+    0.36631740625
+  ],
+  "val_mse": [
+    0.39402791666666664
+  ],
+  "best_val_mse": 0.39402791666666664,
+  "best_epoch": 0,
+  "train_seconds": 0.6527516841888428,
+  "config": {
+    "mode": "direct",
+    "k": null,
+    "hidden": [],
+    "in_dim": 56,
+    "out_dim": 1500
+  }
+}

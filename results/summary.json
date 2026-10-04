@@ -1,0 +1,75 @@
+{
+  "rows": [
+    {
+      "name": "linreg",
+      "mode": "direct",
+      "k": "-",
+      "hidden": "[]",
+      "params": 85500,
+      "best_epoch": 0,
+      "test_mse": 0.3918444812297821,
+      "test_rmse_cm": 0.6259748247571799,
+      "mean_vertex_err_cm": 0.9908762574195862,
+      "p95_vertex_err_cm": 1.7867984771728516,
+      "ms_per_pose_batch1": 0.05971550002868753,
+      "ms_per_pose_batch256": 0.0008991406241420918
+    },
+    {
+      "name": "direct",
+      "mode": "direct",
+      "k": "-",
+      "hidden": "[128, 256]",
+      "params": 425820,
+      "best_epoch": 997,
+      "test_mse": 0.2505251169204712,
+      "test_rmse_cm": 0.500524841461911,
+      "mean_vertex_err_cm": 0.7894081473350525,
+      "p95_vertex_err_cm": 1.4473721981048584,
+      "ms_per_pose_batch1": 0.11928900006751064,
+      "ms_per_pose_batch256": 0.003664867186898846
+    },
+    {
+      "name": "pca256",
+      "mode": "pca",
+      "k": 256,
+      "hidden": "[128, 256]",
+      "params": 106112,
+      "best_epoch": 999,
+      "test_mse": 0.2527995705604553,
+      "test_rmse_cm": 0.5027917765441827,
+      "mean_vertex_err_cm": 0.7941227555274963,
+      "p95_vertex_err_cm": 1.4487743377685547,
+      "ms_per_pose_batch1": 0.18351849997998215,
+      "ms_per_pose_batch256": 0.004741625000406202
+    },
+    {
+      "name": "pca128",
+      "mode": "pca",
+      "k": 128,
+      "hidden": "[128, 256]",
+      "params": 73216,
+      "best_epoch": 994,
+      "test_mse": 0.2537432312965393,
+      "test_rmse_cm": 0.5037293234431953,
+      "mean_vertex_err_cm": 0.7953189015388489,
+      "p95_vertex_err_cm": 1.4444644451141357,
+      "ms_per_pose_batch1": 0.16423050001321826,
+      "ms_per_pose_batch256": 0.0029809140630732145
+    },
+    {
+      "name": "pca64",
+      "mode": "pca",
+      "k": 64,
+      "hidden": "[128, 256]",
+      "params": 56768,
+      "best_epoch": 999,
+      "test_mse": 0.25009751319885254,
+      "test_rmse_cm": 0.5000975036918827,
+      "mean_vertex_err_cm": 0.7900046706199646,
+      "p95_vertex_err_cm": 1.4336522817611694,
+      "ms_per_pose_batch1": 0.14645600000221748,
+      "ms_per_pose_batch256": 0.002098242187003052
+    }
+  ],
+  "mean_predictor_mse": 1.8314661979675293
+}
