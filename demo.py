@@ -27,8 +27,12 @@ def main():
 
     data = load_dataset(args.data)
     nx, ny = (int(v) for v in data["grid_shape"])
+    cloud = nx == 0  # real garment mesh (e.g. TailorNet): drawn as a point cloud
     rest = data["rest"]
     xte, yte = data["q_test"], data["y_test"]
+
+    def rest_now():  # multi-combo TailorNet data stores each test pose's own rest garment
+        return data["rest_test"][state["i"]] if "rest_test" in data else data["rest"]
 
     names = [args.model] + ([args.compare] if args.compare else [])
     models = {n: load_checkpoint(CKPT_DIR / f"{n}.pt")[0] for n in names}
@@ -39,6 +43,18 @@ def main():
     state = {"i": args.index % len(xte)}
 
     def surface(ax, offsets, title, color_vals, vmax, cmap):
+        if cloud:
+            rest_i = rest_now()
+            pos = rest_i + offsets.reshape(-1, 3)
+            ax.clear()
+            ax.scatter(pos[:, 0], -pos[:, 2], pos[:, 1], c=color_vals, cmap=cmap, vmin=0, vmax=vmax, s=2)
+            ax.set_title(title, fontsize=10)
+            lo, hi = rest_i.min(axis=0), rest_i.max(axis=0)
+            ax.set_xlim(lo[0], hi[0]); ax.set_ylim(-hi[2], -lo[2]); ax.set_zlim(lo[1], hi[1])
+            ax.set_box_aspect((hi[0] - lo[0], hi[2] - lo[2], hi[1] - lo[1]))
+            ax.set_xlabel("x (cm)"); ax.set_ylabel("-z"); ax.set_zlabel("y (cm)")
+            ax.view_init(elev=10, azim=-90)
+            return
         pos = (rest + offsets.reshape(-1, 3)).reshape(ny, nx, 3)
         colors = plt.get_cmap(cmap)(np.clip(color_vals.reshape(ny, nx) / vmax, 0, 1))[:-1, :-1]
         ax.clear()
