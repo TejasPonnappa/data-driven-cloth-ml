@@ -143,9 +143,10 @@ def main():
     ap.add_argument("--names", nargs="+", default=DEFAULT_NAMES)
     ap.add_argument("--data", default=str(DATA_PATH))
     ap.add_argument("--heatmap_model", default=None, help="default: best test MSE")
+    ap.add_argument("--out_dir", default=str(RESULTS_DIR), help="where summary + plots go")
     args = ap.parse_args()
 
-    ensure_dir(RESULTS_DIR)
+    out = ensure_dir(args.out_dir)
     data = load_dataset(args.data)
     xte, yte = torch.from_numpy(data["q_test"]), data["y_test"]
 
@@ -166,18 +167,19 @@ def main():
     mean_mse = float(np.mean((yte - data["y_train"].mean(axis=0)) ** 2))
     print(f"reference: predicting the train mean gives MSE {mean_mse:.5f}")
 
-    with open(RESULTS_DIR / "summary.csv", "w", newline="") as f:
+    with open(out / "summary.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    save_json({"rows": rows, "mean_predictor_mse": mean_mse}, RESULTS_DIR / "summary.json")
+    save_json({"rows": rows, "mean_predictor_mse": mean_mse}, out / "summary.json")
 
-    plot_explained_variance(data["y_train"], yte, RESULTS_DIR / "explained_variance.png")
-    plot_ablation(rows, mean_mse, RESULTS_DIR / "ablation.png")
-    plot_curves(names, RESULTS_DIR / "training_curves.png")
+    plot_explained_variance(data["y_train"], yte, out / "explained_variance.png")
+    plot_ablation(rows, mean_mse, out / "ablation.png")
+    plot_curves(names, out / "training_curves.png")
     best = args.heatmap_model or min(rows, key=lambda r: r["test_mse"])["name"]
-    plot_vertex_error(errs[best], data["grid_shape"], best, RESULTS_DIR / f"per_vertex_error_{best}.png")
-    print(f"saved summary + plots to {RESULTS_DIR}")
+    if int(data["grid_shape"][0]) > 0:  # flat panel only; meshes without a grid skip this plot
+        plot_vertex_error(errs[best], data["grid_shape"], best, out / f"per_vertex_error_{best}.png")
+    print(f"saved summary + plots to {out}")
 
 
 if __name__ == "__main__":
