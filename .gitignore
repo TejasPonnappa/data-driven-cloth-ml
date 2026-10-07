@@ -20,3 +20,5 @@ results_400ep/
 .vscode/
 .DS_Store
 Thumbs.db
+
+data/tailornet.npz
