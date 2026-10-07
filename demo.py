@@ -38,22 +38,26 @@ def main():
     models = {n: load_checkpoint(CKPT_DIR / f"{n}.pt")[0] for n in names}
 
     ncols = 2 + len(names)  # ground truth + each model + error of the main model
-    fig = plt.figure(figsize=(4.2 * ncols, 5))
-    axes = [fig.add_subplot(1, ncols, i + 1, projection="3d") for i in range(ncols)]
+    fig = plt.figure(figsize=(3.6 * ncols, 7) if cloud else (4.2 * ncols, 5))
+    axes = [fig.add_subplot(1, ncols, i + 1, **({} if cloud else {"projection": "3d"})) for i in range(ncols)]
     state = {"i": args.index % len(xte)}
 
     def surface(ax, offsets, title, color_vals, vmax, cmap):
-        if cloud:
+        if cloud:  # clean 2D front view (x vs height), points coloured by how far they moved
             rest_i = rest_now()
             pos = rest_i + offsets.reshape(-1, 3)
+            order = np.argsort(pos[:, 2])  # draw far points first
             ax.clear()
-            ax.scatter(pos[:, 0], -pos[:, 2], pos[:, 1], c=color_vals, cmap=cmap, vmin=0, vmax=vmax, s=2)
-            ax.set_title(title, fontsize=10)
+            ax.scatter(pos[order, 0], pos[order, 1], c=color_vals[order], cmap=cmap,
+                       vmin=0, vmax=vmax, s=5, linewidths=0)
             lo, hi = rest_i.min(axis=0), rest_i.max(axis=0)
-            ax.set_xlim(lo[0], hi[0]); ax.set_ylim(-hi[2], -lo[2]); ax.set_zlim(lo[1], hi[1])
-            ax.set_box_aspect((hi[0] - lo[0], hi[2] - lo[2], hi[1] - lo[1]))
-            ax.set_xlabel("x (cm)"); ax.set_ylabel("-z"); ax.set_zlabel("y (cm)")
-            ax.view_init(elev=10, azim=-90)
+            padx, pady = 0.15 * (hi[0] - lo[0]), 0.05 * (hi[1] - lo[1])
+            ax.set_xlim(lo[0] - padx, hi[0] + padx); ax.set_ylim(lo[1] - pady, hi[1] + pady)
+            ax.set_aspect("equal")
+            ax.set_title(title, fontsize=11)
+            ax.set_xticks([]); ax.set_yticks([])
+            for sp in ax.spines.values():
+                sp.set_visible(False)
             return
         pos = (rest + offsets.reshape(-1, 3)).reshape(ny, nx, 3)
         colors = plt.get_cmap(cmap)(np.clip(color_vals.reshape(ny, nx) / vmax, 0, 1))[:-1, :-1]
@@ -71,15 +75,15 @@ def main():
         gt = yte[i]
         gmag = np.linalg.norm(gt.reshape(-1, 3), axis=1)
         vmax = max(gmag.max(), 1e-6)
-        surface(axes[0], gt, f"Ground truth (test pose {i})", gmag, vmax, "viridis")
+        surface(axes[0], gt, f"Real simulation (pose {i})", gmag, vmax, "viridis")
         preds = {}
         for k, n in enumerate(names):
             with torch.no_grad():
                 preds[n] = models[n](q).numpy()[0]
             pmag = np.linalg.norm(preds[n].reshape(-1, 3), axis=1)
-            surface(axes[1 + k], preds[n], f"Prediction: {n}", pmag, vmax, "viridis")
+            surface(axes[1 + k], preds[n], f"Predicted: {n}", pmag, vmax, "viridis")
         err = np.linalg.norm((preds[names[0]] - gt).reshape(-1, 3), axis=1)
-        surface(axes[-1], preds[names[0]], f"Error of {names[0]} (mean {err.mean():.3f} cm)",
+        surface(axes[-1], preds[names[0]], f"Error, {names[0]}\nmean {err.mean():.2f} cm",
                 err, max(err.max(), 1e-6), "magma")
         fig.canvas.draw_idle()
 
