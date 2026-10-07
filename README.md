@@ -5,7 +5,7 @@
 | Team member | SRN |
 |---|---|
 | Tejas Ponnappa | PES1UG24CS498 |
-| Mukesh Sheregar | PES1UG24CS828 |
+| Mukesh Sheregar | PES1UG25CS828 |
 
 Reproduction of the pipeline from Xue & Wu, *"Data-Driven Clothing for Interactive Applications"*
 (Stanford CS229 project report, Spring 2021,
@@ -85,5 +85,5 @@ docs/                  slides and report
 
 ## Team contributions
 - **Tejas Ponnappa (PES1UG24CS498):** TailorNet data loading, outlier filtering and train/val/test split (`src/data_tailornet.py`, `src/data.py`, `src/utils.py`); training pipeline and the model runs for the ablation (`src/train.py`, `run_all_tn.bat`); evaluation, metrics and plots (`src/evaluate.py`); live demo (`demo.py`); repository setup, results and report.
-- **Mukesh Sheregar (PES1UG24CS828):** PCA of the vertex offsets (`src/pca.py`); network architecture with the fixed PCA layer and the linear-regression baseline (`src/model.py`); added modules to the repository.
+- **Mukesh Sheregar (PES1UG25CS828):** PCA of the vertex offsets (`src/pca.py`); network architecture with the fixed PCA layer and the linear-regression baseline (`src/model.py`); added modules to the repository.
 - **Both:** presenting the project at the review.
